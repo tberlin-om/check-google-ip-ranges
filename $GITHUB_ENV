@@ -1,3 +1,0 @@
-    - name: Set has_artifact
-      run: |
-        echo "has_artifact=${{ steps.download.conclusion != 'failure' }}" >> $GITHUB_ENV
