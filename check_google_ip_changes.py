@@ -4,14 +4,15 @@ import os
 import requests
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from deepdiff import DeepDiff
 
 SMTP_USERNAME = os.environ["SMTP_USERNAME"]
 SMTP_PASSWORD = os.environ["SMTP_PASSWORD"]
 SENDER_EMAIL = os.environ["SENDER_EMAIL"]
 RECIPIENT_EMAIL = os.environ["RECIPIENT_EMAIL"]
 
-# Replace with your SMTP Server Credentials
-SMTP_SERVER = "SMTP_SERVER"
+#Replace with your SMTP Server Credentials
+SMTP_SERVER = "SMTPServer"
 SMTP_PORT = 25
 USE_TLS = False
 
@@ -37,7 +38,9 @@ def main():
     )
     current_data = response.json()
 
-    if previous_data != current_data:
+    diff = DeepDiff(previous_data, current_data, exclude_paths=["root['syncToken']", "root['creationTime']"])
+
+    if diff:
         differences = json.dumps({"old": previous_data, "new": current_data}, indent=2)
         send_email("Google IP Changes Detected", differences)
 
